@@ -1,0 +1,25 @@
+{
+  "name": "final_drilling",
+  "version": "1.0.0",
+  "description": "Prueba Final Modulo 7",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "./node_modules/.bin/nodemon",
+    "sync-db": "node ./app/scripts/createTables.js"
+  },
+  "author": "Sixto Guerra U.-",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "http-status-codes": "^2.2.0",
+    "pg": "^8.11.2",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.32.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
