@@ -5,10 +5,10 @@ const {
 
 const load_user = async () => {
     console.log('*********CREANDO SEED USER*********');
-    await User.create({firstName: 'Mateo', lastName: 'Díaz', email: 'mateo.diaz@correo.com'});
-    await User.create({firstName: 'Santiago', lastName: 'Mejías', email: 'santiago.mejias@correo.com'});
-    await User.create({firstName: 'Lucas', lastName: 'Rojas', email: 'lucas.rojas@correo.com'});
-    await User.create({firstName: 'Facundo', lastName: 'Fernandez', email: 'facundo.fernandez@correo.com'});
+    await User.create({firstName: 'Mateo', lastName: 'Díaz', email: 'mateo.diaz@correo.com', password: 'mateo123456'});
+    await User.create({firstName: 'Santiago', lastName: 'Mejías', email: 'santiago.mejias@correo.com', password: 'santiago123456' });
+    await User.create({firstName: 'Lucas', lastName: 'Rojas', email: 'lucas.rojas@correo.com', password: 'lucas123456'});
+    await User.create({firstName: 'Facundo', lastName: 'Fernandez', email: 'facundo.fernandez@correo.com', password: 'facundo123456'});
     return {message: 'Datos Guardados Correctamente User'};
  }
 

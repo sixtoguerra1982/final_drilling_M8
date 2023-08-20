@@ -10,7 +10,15 @@ const Bootcamp = sequelize.define('bootcamp', {
     },
     title: {
         type: DataTypes.STRING(200),
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notNull: {
+                msg: 'El Titulo es requerido'
+            },
+            notEmpty: {
+                msg: 'Debe ingresar un Titulo'
+            }
+        }
     },
     cue: {
         type: DataTypes.INTEGER,
@@ -21,7 +29,15 @@ const Bootcamp = sequelize.define('bootcamp', {
     },
     description: {
         type: DataTypes.STRING(250),
-        allowNull: false
+        allowNull: false,
+        validate: {
+            notNull: {
+                msg: 'descripción requerido'
+            },
+            notEmpty: {
+                msg: 'Debe ingresar descripcion'
+            }
+        }
     },
 }
 );
