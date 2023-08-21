@@ -12,14 +12,11 @@ const sign = util.promisify(jwt.sign);
 const { createUser, findAllUser, findUserById, updateUserById, deleteUserById } = require('./app/controllers/user.controller');
 const { createBootcamp, findBootcampById, findAllBootcamp, addUserToBootcamp } = require('./app/controllers/bootcamp.controller');
 const { 
-    verifySingUp,
-    verifyToken 
+    verifySingUp
 } = require('./app/middleware');
 // MIDDELEWARES
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use('/api/user', verifyToken); 
-
 
 //  http://localhost:3000
 app.get('/', (req, res) => {
@@ -75,6 +72,57 @@ app.post('/api/signup', verifySingUp, async (req, res) => {
         console.error(error);
         res.status(500).json({ message: error.message });
     }
+});
+
+// API SIGN IN
+app.post('/api/signin', async (req, res) => {
+  // lógica del inicio de sesión
+  try {
+      const {
+          email,
+          password
+      } = req.body;
+
+      // Validar los datos de entrada
+      if (!(email && password)) {
+          res.status(400).json({ message: 'Todos los datos son requeridos, email y password' });
+          return;
+      }
+
+      // Validando la existencia del usuario en la base de datos
+      const user = await User.findOne({
+          where: {
+              email
+          }
+      });
+
+      if (user && (await bcrypt.compare(password, user.password))) {
+          // Se genera el Token
+          const token = await sign(
+              {
+                  userId: user.id,
+                  email
+              },
+              process.env.TOKEN_KEY, 
+              {
+                  expiresIn: "2m",
+              }
+          );
+          // Impresion por el terminal del Token generado para el usuario
+          console.log("Usuario: " + email + "\nToken: " + token);
+
+          // Retornando los datos del usuario
+          res.status(200).json({
+              token,
+              message: 'Autenticado'
+          });
+          return;
+      }
+      res.status(401).json({ message: 'Credenciales invalidas'});
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+  }
 });
 
 //  -> CREATE USER <-

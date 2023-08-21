@@ -1,7 +1,7 @@
 const verifySingUp = require('./verifySingUp');
-// const verifyToken = require('./auth');
+const verifyToken = require('./auth');
 
 module.exports = {
-    verifySingUp
-    // verifyToken
+    verifySingUp,
+    verifyToken
 }
