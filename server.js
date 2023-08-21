@@ -3,18 +3,78 @@ const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT;
 const { StatusCodes } = require('http-status-codes');
-
+const { User } = require('./app/models');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const util = require('util');
+const sign = util.promisify(jwt.sign);
 // IMPORTAR CONTROLADORES
 const { createUser, findAllUser, findUserById, updateUserById, deleteUserById } = require('./app/controllers/user.controller');
 const { createBootcamp, findBootcampById, findAllBootcamp, addUserToBootcamp } = require('./app/controllers/bootcamp.controller');
+const { 
+    verifySingUp,
+    verifyToken 
+} = require('./app/middleware');
 // MIDDELEWARES
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+// app.use('/api/user', verifyToken); 
 
 
 //  http://localhost:3000
 app.get('/', (req, res) => {
   res.send('Hello World!');
+});
+
+// API SIGN UP
+app.post('/api/signup', verifySingUp, async (req, res) => {
+    // lógica del registro
+    try {
+        // obteniendo los valores de entrada
+        const {
+            firstName,
+            lastName,
+            email,
+            password
+        } = req.body;
+
+        //Generamos aleatoriamente el salt
+        const salt = await bcrypt.genSalt(10);
+        console.log("Salt generado: " + salt);
+        // Encriptando la contraseña del usuario
+        const encryptedPassword = await bcrypt.hash(password, salt);
+
+        // Password encriptado
+        console.log("\nPassword encriptado: " + encryptedPassword);
+
+        // Creando el usuario en la bases de datos
+        const user = await User.create({
+            firstName,
+            lastName,
+            email: email.toLowerCase(), // Convertimos a minuscula
+            password: encryptedPassword,
+        });
+
+        // Creación del Token
+        const token = await sign(
+          {
+              userId: user.id,
+              email
+          },
+          process.env.TOKEN_KEY,
+          {
+              expiresIn: "2m",
+          }
+        );  
+        // retornamos el nuevo usuario
+        res.status(201).json({
+            user,
+            token
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
 });
 
 //  -> CREATE USER <-

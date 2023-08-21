@@ -2,13 +2,26 @@ const {
     Bootcamp,
     User 
 } = require('../models');
+const bcrypt = require('bcryptjs');
 
 const load_user = async () => {
     console.log('*********CREANDO SEED USER*********');
-    await User.create({firstName: 'Mateo', lastName: 'Díaz', email: 'mateo.diaz@correo.com', password: 'mateo123456'});
-    await User.create({firstName: 'Santiago', lastName: 'Mejías', email: 'santiago.mejias@correo.com', password: 'santiago123456' });
-    await User.create({firstName: 'Lucas', lastName: 'Rojas', email: 'lucas.rojas@correo.com', password: 'lucas123456'});
-    await User.create({firstName: 'Facundo', lastName: 'Fernandez', email: 'facundo.fernandez@correo.com', password: 'facundo123456'});
+    let password = 'mateo123456';
+    let salt = await bcrypt.genSalt(10);
+    let encrypted = await bcrypt.hash(password, salt);
+    await User.create({firstName: 'Mateo', lastName: 'Díaz', email: 'mateo.diaz@correo.com', password: encrypted});
+    password = 'santiago123456';
+    salt = await bcrypt.genSalt(10);
+    encrypted = await bcrypt.hash(password, salt);
+    await User.create({firstName: 'Santiago', lastName: 'Mejías', email: 'santiago.mejias@correo.com', password: encrypted});
+    password = 'lucas123456';
+    salt = await bcrypt.genSalt(10);
+    encrypted = await bcrypt.hash(password, salt);
+    await User.create({firstName: 'Lucas', lastName: 'Rojas', email: 'lucas.rojas@correo.com', password: encrypted});
+    password = 'facundo123456';
+    salt = await bcrypt.genSalt(10);
+    encrypted = await bcrypt.hash(password, salt);
+    await User.create({firstName: 'Facundo', lastName: 'Fernandez', email: 'facundo.fernandez@correo.com', password: encrypted});
     return {message: 'Datos Guardados Correctamente User'};
  }
 
