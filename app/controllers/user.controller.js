@@ -1,33 +1,15 @@
-const { 
+const {
     Bootcamp,
-    User 
+    User
 } = require('../models');
 
-const createUser = async (user) => {
-    try {
-        const userfind = await User.findAll({where: {email: user.email.toLowerCase()}});
-        if (userfind[0] && userfind[0]['dataValues']) 
-        {
-            console.log(`email ${user.email.toLowerCase()} ya existe`)
-            return { message: `email ${user.email.toLowerCase()} ya existe` };
-        } else {
-            const userResponse = await User.create({
-                firstName: user.first_name,
-                lastName: user.last_name,
-                email: user.email.toLowerCase()
-            });
-            console.log(`Se ha creado el usuario ${JSON.stringify(userResponse, null, 4)}`);
-            return userResponse;
-        }
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
-}
+const { StatusCodes } = require('http-status-codes');
+const bcrypt = require('bcryptjs');
 
-const findAllUser = async () => {
+const findAllUsers = async (req, res) => {
     try {
-        const allUsers = await User.findAll({order: ['id'], 
+        const allUsers = await User.findAll({
+            order: ['id'],
             include: [
                 {
                     model: Bootcamp,
@@ -40,53 +22,101 @@ const findAllUser = async () => {
             ]
         });
         console.log(`Se han encontrado los usuarios ${JSON.stringify(allUsers, null, 4)}`);
-        return allUsers;
+        res.status(200).json({
+            message: `se encontraron ${allUsers.length} usuarios`,
+            users: allUsers
+        });
     } catch (error) {
         console.error(error);
-        throw error;
+        res.status(500).json({ message: error.message });
     }
 }
 
-const findUserById = async (id) => {
+const findUserById = async (req, res) => {
     try {
-        const user = await User.findByPk(id,{include: [
-            {
-                model: Bootcamp,
-                as: 'bootcamp',
-                attributes: ['id', 'title'],
-                through: {
-                    attributes: []
+        const id = req.params.id;
+        const user = await User.findByPk(id, {
+            include: [
+                {
+                    model: Bootcamp,
+                    as: 'bootcamp',
+                    attributes: ['id', 'title'],
+                    through: {
+                        attributes: []
+                    }
                 }
-            }
-        ]});
-        if (user) {
-            console.log(`Se ha encontrado el usuario ${JSON.stringify(user, null, 4)}`);
-            return user;
-        } else {
-            console.log(`No Se ha encontrado el usuario con id ${id}`);
-            return { message: 'Usuario no Encontrado' };
+            ]
+        });
+
+        if (!user) {
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: `usuario id ${id} no fue encontrado`
+            });
+            return;
         }
+        console.log(`Se ha encontrado el usuario ${JSON.stringify(user, null, 4)}`);
+        res.json({
+            message: `usuario ${user.email} fue encontrado con éxito`,
+            user
+        });
+
     } catch (error) {
-        console.error(error);
-        throw error;
+        console.log(error);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 
-const updateUserById = async (id, user) => {
-    try {
-        const userFound = await User.findByPk(id);
-        if (userFound) {
-            const userResponse = await User.update(user, {
-                where: { id }
+const updateUserById = async (req, res) => {
+        try {
+            const { id } = req.params;
+            const user = req.body;
+            // Validar los datos de entrada
+            if (!(user.email && user.password && user.firstName && user.lastName && id)) {
+                res.status(400).json({ message: 'Todos los campos son requeridos' });
+                return;
+            }
+            const userFound = await User.findByPk(id);
+            let actualizados = [], actualizado;
+    
+            if (userFound) {
+                //Generamos aleatoriamente el salt
+                const salt = await bcrypt.genSalt(10);
+                console.log("Salt generado: " + salt);
+                const encryptedPassword = await bcrypt.hash(user.password, salt);
+                if ((userFound.firstName !== user.firstName) ||
+                    (userFound.lastName !== user.lastName) ||
+                    (userFound.email !== user.email) ||
+                    (userFound.password !== encryptedPassword)) {
+                    actualizados = await User.update({
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        email: user.email,
+                        password: encryptedPassword
+                    }, {
+                        where: { id }
+                    });
+                    actualizado = actualizados[0];
+                    console.log(`actualizados: ${actualizados}`);
+                    console.log(`Se ha actualizado el usuario con id ${user.id}`);
+                } else {
+                    actualizado = -1;
+                }
+            } else {
+                actualizado = 0;
+            }
+            if (!actualizado) {
+                res.status(404).json({
+                    message: `proyecto id ${id} no fue encontrado`
+                });
+                return;
+            }
+            res.status(201).json({
+                message: `proyecto id ${id} fue actualizado con éxito`
             });
-            return userResponse;            
-        } else {
-            return { message: 'Usuario no Encontrado' };
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: error.message });
         }
-    } catch (error) {
-        console.error(error);
-        throw error;
-    }
 }
 
 const deleteUserById = async (id) => {
@@ -96,7 +126,7 @@ const deleteUserById = async (id) => {
             const userResponse = await User.destroy({
                 where: { id }
             });
-            return [userResponse, userFound];            
+            return [userResponse, userFound];
         } else {
             return { message: 'Usuario no Encontrado' };
         }
@@ -106,4 +136,9 @@ const deleteUserById = async (id) => {
     }
 }
 
-module.exports = { createUser, findAllUser, findUserById, updateUserById, deleteUserById }
+module.exports = {
+    findAllUsers,
+    findUserById,
+    updateUserById,
+    deleteUserById
+}
