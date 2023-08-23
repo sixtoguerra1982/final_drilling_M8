@@ -119,20 +119,31 @@ const updateUserById = async (req, res) => {
         }
 }
 
-const deleteUserById = async (id) => {
+const deleteUserById = async (req, res) => {
     try {
+        const id = req.params.id;
         const userFound = await User.findByPk(id);
         if (userFound) {
             const userResponse = await User.destroy({
                 where: { id }
             });
-            return [userResponse, userFound];
+            if (userResponse){
+                res.status(201).json({
+                    message: `usuario id ${id} fue borrado con éxito`
+                });
+            } else {
+                res.status(500).json({
+                    message: `usuario id ${id} NO fue eliminado`
+                });
+            }
         } else {
-            return { message: 'Usuario no Encontrado' };
+            res.status(404).json({
+                message: `usuario id ${id} no fue encontrado`
+            });
         }
     } catch (error) {
         console.error(error);
-        throw error;
+        res.status(500).json({ message: error.message });
     }
 }
 

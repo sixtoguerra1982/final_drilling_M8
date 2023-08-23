@@ -8,15 +8,18 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const util = require('util');
 const sign = util.promisify(jwt.sign);
-// IMPORTAR CONTROLADORES
-const { createUser, findAllUser, findUserById, updateUserById, deleteUserById } = require('./app/controllers/user.controller');
+const userRoutes = require('./app/routes/user.routes');
+
 const { createBootcamp, findBootcampById, findAllBootcamp, addUserToBootcamp } = require('./app/controllers/bootcamp.controller');
 const { 
-    verifySingUp
+    verifySingUp,
+    verifyToken 
 } = require('./app/middleware');
 // MIDDELEWARES
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api/user', verifyToken); // protegemos todas las rutas de user
+app.use('/api/user', userRoutes);
 
 //  http://localhost:3000
 app.get('/', (req, res) => {
@@ -60,7 +63,7 @@ app.post('/api/signup', verifySingUp, async (req, res) => {
           },
           process.env.TOKEN_KEY,
           {
-              expiresIn: "2m",
+              expiresIn: "10m",
           }
         );  
         // retornamos el nuevo usuario
@@ -105,7 +108,7 @@ app.post('/api/signin', async (req, res) => {
               },
               process.env.TOKEN_KEY, 
               {
-                  expiresIn: "2m",
+                  expiresIn: "10m",
               }
           );
           // Impresion por el terminal del Token generado para el usuario
@@ -124,117 +127,6 @@ app.post('/api/signin', async (req, res) => {
       res.status(500).json({ message: error.message });
   }
 });
-
-//  -> CREATE USER <-
-//  http://localhost:3000/user?first_name=Sixto&last_name=Guerra&email=sixto.guerra1982@gmail.com
-app.post('/user/', async (req, res) => {
-  try {
-    if (req.query.first_name && req.query.last_name && req.query.email) {
-      const user = await createUser(req.query);
-      if (user.message) {
-        res.status(StatusCodes.BAD_REQUEST).json(user);
-      } else {
-        res.status(StatusCodes.CREATED).json({
-          message: `usuario ${user.email} fue creado con éxito`,
-          user
-        });
-      }
-    } else {
-      res.status(StatusCodes.BAD_REQUEST)
-        .json({ message: `Query Params de Entrada, Insufucientes (first_name, last_name, email )` });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
-});
-
-//  -> INDEX USERS <-
-// http://localhost:3000/users/
-app.get('/users/', async (req, res) => {
-  try {
-    const users = await findAllUser();
-    res.json(users)
-  } catch (error) {
-    console.log(error)
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
-})
-
-//  -> SEARCH BY USERS <-
-// http://localhost:3000/user/:id
-app.get('/user/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    const user = await findUserById(id);
-    res.status((user.message) ? StatusCodes.NOT_FOUND : StatusCodes.OK ).json(user);
-  } catch (error) {
-    console.log(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
-})
-
-//  -> UPDATE USER <-
-// http://localhost:3000/user/10?email=guerrasoft@gmail.com&first_name=Felipe&last_name=Guerra
-app.put('/user/:id', async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    if (req.query.first_name || req.query.last_name || req.query.email){
-      const user = {firstName: req.query.first_name, 
-                    lastName: req.query.last_name, 
-                    email: req.query.email};
-      // Eliminar llaves con valores undefined
-      for (let key in user) {
-        if (user.hasOwnProperty(key) && user[key] === undefined) {
-            delete user[key];
-        }
-      }
-      const userUpdate = await updateUserById(id, user);
-      if (userUpdate.message) {
-        res.status(StatusCodes.NOT_FOUND).json(userUpdate);
-      } else {
-        let obj
-        if (userUpdate[0] == 1){
-            obj = { message: `Usuario con id ${id}, efectivamente actualizado`, data: user};
-        } else {
-            obj = { message: `Usuario con id ${id}. No fue actualizado`};
-        }
-        res.status((obj['data']) ? StatusCodes.CREATED : StatusCodes.BAD_REQUEST).json(obj);
-      }
-    } else {
-      res.status(StatusCodes.BAD_REQUEST)
-      .json({ message: `Query Params de Entrada, Insufucientes (first_name, last_name, email)` });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
-})
-
-
-//  -> DELETE USER BY ID <-
-// http://localhost:3000/user/:id
-app.delete('/user/:id', async (req, res) => {
-  try {
-    const id = Number(req.params.id);
-    const userDelete = await deleteUserById(id);
-      if (userDelete.message) {
-        res.status(StatusCodes.NOT_FOUND).json(userDelete);
-      } else {
-        console.log(userDelete)
-        let obj
-        if (userDelete[0] == 1){
-            obj = { message: `Usuario con id ${id}, efectivamente Eliminado`, data: userDelete[1]};
-        } else {
-            obj = { message: `Usuario con id ${id}. No fue Eliminado`};
-        }
-        res.status((obj['data']) ? StatusCodes.OK : StatusCodes.BAD_REQUEST).json(obj);
-      }
-  } catch (error) {
-    console.log(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
-})
 
 //  -> CREATE BOOTCAMP <-
 //  http://localhost:3000/bootcamp?title=JS27&cue=100&description=HTML, CCS, JS , POSTGRESQL
