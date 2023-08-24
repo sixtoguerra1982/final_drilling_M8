@@ -9,8 +9,9 @@ const jwt = require('jsonwebtoken');
 const util = require('util');
 const sign = util.promisify(jwt.sign);
 const userRoutes = require('./app/routes/user.routes');
+const bootcampRoutes = require('./app/routes/bootcamp.routes');
 
-const { createBootcamp, findBootcampById, findAllBootcamp, addUserToBootcamp } = require('./app/controllers/bootcamp.controller');
+// const { findBootcampById, findAllBootcamp, addUserToBootcamp } = require('./app/controllers/bootcamp.controller');
 const { 
     verifySingUp,
     verifyToken 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/user', verifyToken); // protegemos todas las rutas de user
 app.use('/api/user', userRoutes);
+app.use('/api/bootcamp', bootcampRoutes);
 
 //  http://localhost:3000
 app.get('/', (req, res) => {
@@ -125,74 +127,6 @@ app.post('/api/signin', async (req, res) => {
   } catch (error) {
       console.error(error);
       res.status(500).json({ message: error.message });
-  }
-});
-
-//  -> CREATE BOOTCAMP <-
-//  http://localhost:3000/bootcamp?title=JS27&cue=100&description=HTML, CCS, JS , POSTGRESQL
-app.post('/bootcamp/', async (req, res) => {
-  try {
-    if (req.query.title && req.query.cue && req.query.description) {
-      const bootcamp = await createBootcamp(req.query);
-      res.status(StatusCodes.CREATED).json({
-        message: `Bootcamp ${bootcamp.title} fue creado con éxito`,
-        bootcamp
-      });
-    } else {
-      res.status(StatusCodes.BAD_REQUEST)
-        .json({ message: `Query Params de Entrada, Insufucientes (title, cue, description)` });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
-});
-
-//  -> SEARCH BOOTCAMP BY ID
-// http://localhost:3000/bootcamp/:id
-app.get('/bootcamp/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-    const user = await findBootcampById(id);
-    res.status((user.message) ? StatusCodes.NOT_FOUND : StatusCodes.OK ).json(user);
-
-  } catch (error) {
-    console.log(error)
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
-}
-);
-
-//  -> INDEX BOOTCAMP <-
-// http://localhost:3000/bootcamps
-app.get('/bootcamps/', async (req, res) => {
-  try {
-    const bootcamps = await findAllBootcamp();
-    res.json(bootcamps)
-  } catch (error) {
-    console.log(error)
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
-})
-
-// BOOTCAMP ADD TO USER
-// http://localhost:3000/bootcamp/adduser/idbootcamp/1/iduser/2
-app.post('/bootcamp/adduser/idbootcamp/:idBootcamp/iduser/:idUser', async (req, res) => {
-  const idBootcamp = Number(req.params.idBootcamp);
-  const idUser = Number(req.params.idUser); 
-  try {
-      const bootcamp = await addUserToBootcamp(idBootcamp, idUser);
-      if (bootcamp) {
-        res.status(StatusCodes.CREATED).json({ 
-            message: `Se agregó usuario id ${idUser} al bootcamp id ${idBootcamp}`,
-            user: bootcamp[1],
-            bootcamp: bootcamp[0]
-        });
-      } else {
-        res.status(StatusCodes.BAD_REQUEST).json({message: 'Usuario o Bootcamp No encontrado!'});
-      }
-  } catch (error) {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
 });
 
