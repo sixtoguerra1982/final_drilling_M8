@@ -22,13 +22,13 @@ const findAllUsers = async (req, res) => {
             ]
         });
         console.log(`Se han encontrado los usuarios ${JSON.stringify(allUsers, null, 4)}`);
-        res.status(200).json({
+        res.json({
             message: `se encontraron ${allUsers.length} usuarios`,
             users: allUsers
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: error.message });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 
@@ -72,7 +72,7 @@ const updateUserById = async (req, res) => {
             const user = req.body;
             // Validar los datos de entrada
             if (!(user.email && user.password && user.firstName && user.lastName && id)) {
-                res.status(400).json({ message: 'Todos los campos son requeridos' });
+                res.status(StatusCodes.BAD_REQUEST).json({ message: 'Todos los campos son requeridos' });
                 return;
             }
             const userFound = await User.findByPk(id);
@@ -105,17 +105,17 @@ const updateUserById = async (req, res) => {
                 actualizado = 0;
             }
             if (!actualizado) {
-                res.status(404).json({
+                res.status(StatusCodes.NOT_FOUND).json({
                     message: `proyecto id ${id} no fue encontrado`
                 });
                 return;
             }
-            res.status(201).json({
+            res.status(StatusCodes.CREATED).json({
                 message: `proyecto id ${id} fue actualizado con éxito`
             });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ message: error.message });
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
         }
 }
 
@@ -128,22 +128,22 @@ const deleteUserById = async (req, res) => {
                 where: { id }
             });
             if (userResponse){
-                res.status(201).json({
+                res.status(StatusCodes.CREATED).json({
                     message: `usuario id ${id} fue borrado con éxito`
                 });
             } else {
-                res.status(500).json({
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                     message: `usuario id ${id} NO fue eliminado`
                 });
             }
         } else {
-            res.status(404).json({
+            res.status(StatusCodes.NOT_FOUND).json({
                 message: `usuario id ${id} no fue encontrado`
             });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: error.message });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 }
 

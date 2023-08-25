@@ -11,24 +11,25 @@ const sign = util.promisify(jwt.sign);
 const userRoutes = require('./app/routes/user.routes');
 const bootcampRoutes = require('./app/routes/bootcamp.routes');
 
-// const { findBootcampById, findAllBootcamp, addUserToBootcamp } = require('./app/controllers/bootcamp.controller');
 const { 
-    verifySingUp,
-    verifyToken 
+    verifySingUp 
 } = require('./app/middleware');
 // MIDDELEWARES
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/api/user', verifyToken); // protegemos todas las rutas de user
+
 app.use('/api/user', userRoutes);
+
 app.use('/api/bootcamp', bootcampRoutes);
 
 //  http://localhost:3000
+//  In the future it will be the view to consume API
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
 // API SIGN UP
+// http://localhost:3000/api/signup
 app.post('/api/signup', verifySingUp, async (req, res) => {
     // lógica del registro
     try {
@@ -69,17 +70,18 @@ app.post('/api/signup', verifySingUp, async (req, res) => {
           }
         );  
         // retornamos el nuevo usuario
-        res.status(201).json({
+        res.status(StatusCodes.CREATED).json({
             user,
             token
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: error.message });
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
     }
 });
 
 // API SIGN IN
+http://localhost:3000/api/signin
 app.post('/api/signin', async (req, res) => {
   // lógica del inicio de sesión
   try {
@@ -90,7 +92,7 @@ app.post('/api/signin', async (req, res) => {
 
       // Validar los datos de entrada
       if (!(email && password)) {
-          res.status(400).json({ message: 'Todos los datos son requeridos, email y password' });
+          res.status(StatusCodes.BAD_REQUEST).json({ message: 'Todos los datos son requeridos, email y password' });
           return;
       }
 
@@ -117,19 +119,20 @@ app.post('/api/signin', async (req, res) => {
           console.log("Usuario: " + email + "\nToken: " + token);
 
           // Retornando los datos del usuario
-          res.status(200).json({
+          res.json({
               token,
               message: 'Autenticado'
           });
           return;
       }
-      res.status(401).json({ message: 'Credenciales invalidas'});
+      res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Credenciales invalidas'});
   } catch (error) {
       console.error(error);
-      res.status(500).json({ message: error.message });
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
 });
 
+// Capturar Request en caso de que ruta no exista
 app.all('*', (req, res) => {
   res.status(StatusCodes.NOT_FOUND).send("Ruta desconocida.");
 });

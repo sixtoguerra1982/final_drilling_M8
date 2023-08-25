@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const util = require('util');
 const verify = util.promisify(jwt.verify);
+const { StatusCodes } = require('http-status-codes');
 
 const TOKEN_KEY = process.env.TOKEN_KEY;
 
@@ -13,7 +14,7 @@ const verifyToken = async (req, res, next) => {
     }
     
     if (!token) {
-        res.status(403).json({ message: 'Un token es requerido para la autorización'});
+        res.status(StatusCodes.FORBIDDEN).json({ message: 'Un token es requerido para la autorización'});
         return;
     }
     try {
@@ -21,10 +22,9 @@ const verifyToken = async (req, res, next) => {
         const decoded = await verify(token, TOKEN_KEY);
         // si el token es correcto nos devolvera los datos que colocamos en el token
         console.log('decoded:', decoded);
-        // req.user = decoded;
         
     } catch (err) {
-        res.status(401).json({ message: 'Token no valido, acceso denegado'});
+        res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Token no valido, acceso denegado'});
         console.log('error:', err);
         return;
     }

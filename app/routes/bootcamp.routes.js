@@ -22,6 +22,3 @@ router.get('/:id', findBootcampById);
 router.post('/adduser/idbootcamp/:idBootcamp/iduser/:idUser', addUserToBootcamp);
 
 module.exports = router;
-
-// POST /api/bootcamp Crea  un  bootcamp,  acceso  por  medio  de  token,  previamente iniciado sesión
-

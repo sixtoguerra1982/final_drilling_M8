@@ -11,6 +11,9 @@ $ npm install
 2) Create database named db_bootcamp in PostrgeSQL
 3) $ npm run sync-db
 
+
+<a href="./FINAL_DRILLING_M8.postman_collection.json" target="blank" >Postman_Collection</a>
+
 | METHOD | END POINT | PUBLIC |
 | ------ | ------   | ---------| 
 | post | http://localhost:3000/api/signup | [x] | 

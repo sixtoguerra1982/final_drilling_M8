@@ -6,18 +6,22 @@ const bcrypt = require('bcryptjs');
 
 const load_user = async () => {
     console.log('*********CREANDO SEED USER*********');
+   //  USER ONE
     let password = 'mateo123456';
     let salt = await bcrypt.genSalt(10);
     let encrypted = await bcrypt.hash(password, salt);
     await User.create({firstName: 'Mateo', lastName: 'Díaz', email: 'mateo.diaz@correo.com', password: encrypted});
+    //  USER TWO
     password = 'santiago123456';
     salt = await bcrypt.genSalt(10);
     encrypted = await bcrypt.hash(password, salt);
     await User.create({firstName: 'Santiago', lastName: 'Mejías', email: 'santiago.mejias@correo.com', password: encrypted});
+    //  USER THREE
     password = 'lucas123456';
     salt = await bcrypt.genSalt(10);
     encrypted = await bcrypt.hash(password, salt);
     await User.create({firstName: 'Lucas', lastName: 'Rojas', email: 'lucas.rojas@correo.com', password: encrypted});
+   //  USER FOUR
     password = 'facundo123456';
     salt = await bcrypt.genSalt(10);
     encrypted = await bcrypt.hash(password, salt);

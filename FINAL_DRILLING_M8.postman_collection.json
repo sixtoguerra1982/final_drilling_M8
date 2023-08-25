@@ -1,0 +1,370 @@
+{
+	"info": {
+		"_postman_id": "9876f4f7-263f-47f5-88b5-6d5df9f720d6",
+		"name": "FINAL_DRILLING_M8",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SIGN_UP",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "firstName",
+							"value": "Sixto",
+							"type": "default",
+							"disabled": true
+						},
+						{
+							"key": "lastName",
+							"value": "Guerra",
+							"type": "default",
+							"disabled": true
+						},
+						{
+							"key": "email",
+							"value": "sixto.guerra1982@gmail.com",
+							"type": "default",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "12341234",
+							"type": "default",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SIGN_IN",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "sixto.guerra1982@gmail.com",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "12341234",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findAllUsers",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoic2l4dG8uZ3VlcnJhMTk4MkBnbWFpbC5jb20iLCJpYXQiOjE2OTI4NTExMTksImV4cCI6MTY5Mjg1MTcxOX0.L3mpHPYAyqDwV3Tuej0tDicunFYNFHY_9ZSEWpDe82w",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findUserById",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoic2l4dG8uZ3VlcnJhMTk4MkBnbWFpbC5jb20iLCJpYXQiOjE2OTI4NTE3MTUsImV4cCI6MTY5Mjg1MjMxNX0.BVMF0RuqzjucRDaVDLhDDU9gxLSowpeHke2lO24XoP4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/user/7",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						"7"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateUserById",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoic2l4dG8uZ3VlcnJhMTk4MkBnbWFpbC5jb20iLCJpYXQiOjE2OTI3NTkxNzcsImV4cCI6MTY5Mjc1OTc3N30.YFx2D3npDSXJ3gLCtjNoNyWPEUDCUGP1cU1iIXAhIGQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "correo@correo.cl",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "87654321",
+							"type": "default"
+						},
+						{
+							"key": "firstName",
+							"value": "Name_Update",
+							"type": "default"
+						},
+						{
+							"key": "lastName",
+							"value": "Last_Name",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user/4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteUserById",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoic2l4dG8uZ3VlcnJhMTk4MkBnbWFpbC5jb20iLCJpYXQiOjE2OTI3NTkxNzcsImV4cCI6MTY5Mjc1OTc3N30.YFx2D3npDSXJ3gLCtjNoNyWPEUDCUGP1cU1iIXAhIGQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/user/6",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						"6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findAllBootcamp",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/bootcamp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bootcamp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createBootcamp",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoic2l4dG8uZ3VlcnJhMTk4MkBnbWFpbC5jb20iLCJpYXQiOjE2OTI5MzU0NDAsImV4cCI6MTY5MjkzNjA0MH0.8VTgr7mIcPwIRhCTQr-b06iENV2qsIky3LfEGEiIAUc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/bootcamp?title=JS27&cue=100&description=HTML, CCS, JS , POSTGRESQL",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bootcamp"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "JS27"
+						},
+						{
+							"key": "cue",
+							"value": "100"
+						},
+						{
+							"key": "description",
+							"value": "HTML, CCS, JS , POSTGRESQL"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "findBootcampById",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoic2l4dG8uZ3VlcnJhMTk4MkBnbWFpbC5jb20iLCJpYXQiOjE2OTI4NTIyODAsImV4cCI6MTY5Mjg1Mjg4MH0.KkP_DHWQ15ZeYXgjLYt8jikuB1UiuqmxCvZJWrbCdBg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/bootcamp/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bootcamp",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "AddUserToBootcamp",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImVtYWlsIjoic2l4dG8uZ3VlcnJhMTk4MkBnbWFpbC5jb20iLCJpYXQiOjE2OTI5MzU0NDAsImV4cCI6MTY5MjkzNjA0MH0.8VTgr7mIcPwIRhCTQr-b06iENV2qsIky3LfEGEiIAUc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/api/bootcamp/adduser/idbootcamp/10/iduser/7",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"bootcamp",
+						"adduser",
+						"idbootcamp",
+						"10",
+						"iduser",
+						"7"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
